@@ -31,7 +31,7 @@ class AuthController extends Controller
 
             // if (auth()->user()->role_id === 1) {
             // jika user superadmin
-            return redirect()->intended('/');
+            return redirect()->intended('/penjualan');
             // } else {
             //     // jika user pegawai
             //     return redirect()->intended('/pegawai');
