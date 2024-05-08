@@ -34,7 +34,7 @@ class penjualanController extends Controller
         } else {
             $continue = tp_hdr::all()->last();
             $de = substr($continue->kd_trs, -6);
-            $noRef = 'TP' . '-' . substr($Y, -2) . $M  . '-' . str_pad(($de + 1), 6, '0', STR_PAD_LEFT);
+            $noRef = 'AMC' . '-' . substr($Y, -2) . $M  . '-' . str_pad(($de + 1), 6, '0', STR_PAD_LEFT);
         };
 
         $isListRegResep = trs_chart_resep::select("kd_trs", "chart_id", "kd_reg", "mr_pasien", "nm_pasien")->distinct()->where('isimplementasi', '=', '0')->get();

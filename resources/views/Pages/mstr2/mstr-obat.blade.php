@@ -179,45 +179,45 @@
                         <div class="form-group form-inline col-6">
                             <div class="row ">
                                 <div class="col-5">
-                                    <label for="">Non-Resep (Rp.)</label>
+                                    <label for="">Customer(Rp.)</label>
                                     <input type="text" class="efm_hrg_jual_non_resep autocurrency form-control"
                                         name="efm_hrg_jual_non_resep" id="efm_hrg_jual_non_resep" value=""
-                                        placeholder=" Reguler / Non-Resep">
+                                        placeholder="Customer">
                                 </div>
                                 <div class="col-5">
-                                    <label for="">Non-Resep (%)</label>
+                                    <label for="">Customer(%)</label>
                                     <input type="text" class="efm_hrg_jual_non_resep_persen autocurrency form-control"
                                         name="efm_hrg_jual_non_resep_persen" id="efm_hrg_jual_non_resep_persen"
-                                        value="" placeholder=" Reguler / Non-Resep">
+                                        value="" placeholder="Customer">
                                 </div>
                             </div>
                         </div>
                         <div class="form-group form-inline col-6">
                             <div class="row ">
                                 <div class="col-5">
-                                    <label for="">Hrg Resep (Rp.)</label>
+                                    <label for="">Grosir toko(Rp.)</label>
                                     <input type="text" class="autocurrency efm_hrg_jual_resep form-control"
                                         name="efm_hrg_jual_resep" id="efm_hrg_jual_resep" value=""
-                                        placeholder="Resep">
+                                        placeholder="Grosir">
                                 </div>
                                 <div class="col-5">
-                                    <label for="">Hrg Resep (%)</label>
+                                    <label for="">Grosir toko(%)</label>
                                     <input type="text" class="autocurrency efm_hrg_jual_resep_persen form-control"
                                         name="efm_hrg_jual_resep_persen" id="efm_hrg_jual_resep_persen" value=""
-                                        placeholder="Resep">
+                                        placeholder="Grosir">
                                 </div>
                             </div>
                         </div>
                         <div class="form-group form-inline col-6">
                             <div class="row ">
                                 <div class="col-5">
-                                    <label for="">Hrg Nakes</label>
+                                    <label for="">Nakes</label>
                                     <input type="text" class="autocurrency efm_hrg_jual_nakes form-control"
                                         name="efm_hrg_jual_nakes" id="efm_hrg_jual_nakes" value=""
                                         placeholder="Nakes">
                                 </div>
                                 <div class="col-5">
-                                    <label for="">Hrg Nakes</label>
+                                    <label for="">Nakes</label>
                                     <input type="text" class="autocurrency efm_hrg_jual_nake_persens form-control"
                                         name="efm_hrg_jual_nakes_persen" id="efm_hrg_jual_nakes_persen" value=""
                                         placeholder="Nakes">
@@ -356,45 +356,45 @@
                         <div class="form-group form-inline col-6">
                             <div class="row ">
                                 <div class="col-5">
-                                    <label for="">Non-Resep (Rp.)</label>
+                                    <label for="">Customer(Rp.)</label>
                                     <input type="text" class="fm_hrg_jual_non_resep autocurrency form-control"
                                         name="fm_hrg_jual_non_resep" id="fm_hrg_jual_non_resep" value=""
-                                        placeholder=" Reguler / Non-Resep">
+                                        placeholder="Customer">
                                 </div>
                                 <div class="col-5">
-                                    <label for="">Non-Resep (%)</label>
+                                    <label for="">Customer(%)</label>
                                     <input type="text" class="fm_hrg_jual_non_resep_persen autocurrency form-control"
                                         name="fm_hrg_jual_non_resep_persen" id="fm_hrg_jual_non_resep_persen"
-                                        value="" placeholder=" Reguler / Non-Resep">
+                                        value="" placeholder="Customer">
                                 </div>
                             </div>
                         </div>
                         <div class="form-group form-inline col-6">
                             <div class="row ">
                                 <div class="col-5">
-                                    <label for="">Hrg Resep (Rp.)</label>
+                                    <label for="">Grosir Toko(Rp.)</label>
                                     <input type="text" class="autocurrency fm_hrg_jual_resep form-control"
                                         name="fm_hrg_jual_resep" id="fm_hrg_jual_resep" value=""
-                                        placeholder="Resep">
+                                        placeholder="Grosir Toko">
                                 </div>
                                 <div class="col-5">
-                                    <label for="">Hrg Resep (%)</label>
+                                    <label for="">Grosir Toko(%)</label>
                                     <input type="text" class="autocurrency fm_hrg_jual_resep_persen form-control"
                                         name="fm_hrg_jual_resep_persen" id="fm_hrg_jual_resep_persen" value=""
-                                        placeholder="Resep">
+                                        placeholder="Grosir Toko">
                                 </div>
                             </div>
                         </div>
                         <div class="form-group form-inline col-6">
                             <div class="row ">
                                 <div class="col-5">
-                                    <label for="">Hrg Nakes (Rp.)</label>
+                                    <label for="">Nakes (Rp.)</label>
                                     <input type="text" class="autocurrency fm_hrg_jual_nakes form-control"
                                         name="fm_hrg_jual_nakes" id="fm_hrg_jual_nakes" value=""
                                         placeholder="Nakes">
                                 </div>
                                 <div class="col-5">
-                                    <label for="">Hrg Nakes (%)</label>
+                                    <label for="">Nakes (%)</label>
                                     <input type="text" class="autocurrency fm_hrg_jual_nake_persens form-control"
                                         name="fm_hrg_jual_nakes_persen" id="fm_hrg_jual_nakes_persen" value=""
                                         placeholder="Nakes">

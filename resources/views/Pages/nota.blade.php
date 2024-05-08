@@ -111,9 +111,9 @@
 <body class="receipt">
     <div class="container">
         <div class="header" style="margin-bottom: 10px;">
-            <div class="">
+            {{-- <div class="">
                 <img src="{{ asset('src/img/AMnw.png') }}" alt="" height="60px" width="60px">
-            </div>
+            </div> --}}
             <h2>ABHIPRAYA MEDIC</h2>
             <small>Susukan 1, Genjahan, Ponjong, Gunungkidul <br> Hp.085727042405
             </small>
