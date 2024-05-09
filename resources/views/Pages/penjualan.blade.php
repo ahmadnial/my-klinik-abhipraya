@@ -163,8 +163,8 @@
                                 <select class="form-control" onchange="getTipeTarif()" id="tp_tipe_tarif"
                                     style="width: 100%;" name="tp_tipe_tarif">
                                     <option value="">--Select--</option>
-                                    <option value="Reguler">Reguler</option>
-                                    <option value="Resep">Resep</option>
+                                    <option value="Reguler">Customer</option>
+                                    <option value="Resep">Grosir Toko</option>
                                     <option value="Nakes">Nakes</option>
                                 </select>
                             </div>
@@ -412,8 +412,8 @@
                                 <select class="tp_tipe_tarife form-control" onchange="getTipeTarifE()"
                                     id="tp_tipe_tarife" style="width: 100%;" name="tp_tipe_tarife">
                                     <option value="">--Select--</option>
-                                    <option value="Reguler">Reguler</option>
-                                    <option value="Resep">Resep</option>
+                                    <option value="Reguler">Customer</option>
+                                    <option value="Resep">Grosir Toko</option>
                                     <option value="Nakes">Nakes</option>
                                 </select>
                             </div>
@@ -763,7 +763,7 @@
                 var tes = $('#tp_tipe_tarif').val();
 
                 if (tes == 'Reguler') {
-                    toastr.info('Harga Reguler Selected!', {
+                    toastr.info('Harga Customer Selected!', {
                         timeOut: 600,
                         // preventDuplicates: true,
                         positionClass: 'toast-top-right',
@@ -810,7 +810,7 @@
 
                 } else if (tes == 'Resep') {
                     $("#getListObatx").empty();
-                    toastr.info('Harga Resep Selected!', {
+                    toastr.info('Harga Grosir Toko Selected!', {
                         timeOut: 600,
                         // preventDuplicates: true,
                         positionClass: 'toast-top-right',
