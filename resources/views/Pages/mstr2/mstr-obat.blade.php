@@ -22,8 +22,8 @@
                             <th>Sat. Beli</th>
                             <th>Sat. Jual</th>
                             <th>Hrg Beli</th>
-                            <th>Hrg Jual Non-resep</th>
-                            <th>Hrg Jual Resep</th>
+                            <th>Hrg Jual Customer</th>
+                            <th>Hrg Jual Grosir/Toko</th>
                             <th>Hrg Jual Nakes</th>
                             <th>Action</th>
                         </tr>
@@ -38,6 +38,7 @@
                                 <td id="">{{ $tz->fm_supplier }}</td>
                                 <td id="">{{ $tz->fm_satuan_pembelian }}</td>
                                 <td id="">{{ $tz->fm_satuan_jual }}</td>
+                                {{-- <td id="">{{ $tz->fm_hrg_beli }}</td> --}}
                                 <td id="">{{ $tz->fm_hrg_beli }}</td>
                                 <td id="">@currency($tz->fm_hrg_jual_non_resep)</td>
                                 <td id="">{{ $tz->fm_hrg_jual_resep }}</td>
@@ -60,9 +61,12 @@
                                         data-hrg_jual_reg_persen="{{ $tz->fm_hrg_jual_non_resep_persen }}"
                                         data-hrg_jual_resep_persen="{{ $tz->fm_hrg_jual_resep_persen }}"
                                         data-hrg_jual_nakes_persen="{{ $tz->fm_hrg_jual_nakes_persen }}" id="editObat"
-                                        onClick="getIDObat(this)"><i class="fa fa-edit"></i>Edit</button>
+                                        onClick="getIDObat(this)"><i class="fa fa-edit"></i></button>
                                     {{-- <button class="btn btn-xs btn-danger" data-toggle="modal"
                                         data-target="#DeleteSupplier{{ $tz->fm_kd_supplier }}">Hapus</button> --}}
+                                    <button class="btn btn-danger btn-xs" data-id="{{ $tz->fm_kd_obat }}"
+                                        data-nmobat="{{ $tz->fm_nm_obat }}" onClick="delObat(this)"><i
+                                            class="fa fa-trash"></i></button>
                                 </td>
                             </tr>
                         @endforeach
@@ -71,6 +75,28 @@
             </div>
         </div>
     </section>
+    {{-- modal delete --}}
+    <div class="modal fade" id="deleteModalObat" data-bs-backdrop="static" aria-labelledby="staticBackdropLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="kd_obat_del" id="kd_obat_del">
+                    apakah yakin akan menghapus <span class="text-danger" id="obatNameToDel"></span>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="execDelObat()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- end modal delete --}}
+
     <!-- The modal Edit -->
     <div class="modal fade" id="EditObatModal">
         <div class="modal-dialog modal-lg">
@@ -90,8 +116,8 @@
                         </div>
                         <div class="form-group col-sm-6">
                             <label for="">Obat</label>
-                            <input type="text" class="form-control" name="efm_nm_obat" id="efm_nm_obat" value=""
-                                placeholder="Input Nama Obat" readonly>
+                            <input type="text" class="form-control" name="efm_nm_obat" id="efm_nm_obat"
+                                value="" placeholder="Input Nama Obat">
                         </div>
                         <div class="form-group col-sm-6">
                             <label for="">Kategori</label>
@@ -179,45 +205,45 @@
                         <div class="form-group form-inline col-6">
                             <div class="row ">
                                 <div class="col-5">
-                                    <label for="">Customer(Rp.)</label>
+                                    <label for="">Customer (Rp.)</label>
                                     <input type="text" class="efm_hrg_jual_non_resep autocurrency form-control"
                                         name="efm_hrg_jual_non_resep" id="efm_hrg_jual_non_resep" value=""
-                                        placeholder="Customer">
+                                        placeholder="Harga Customer">
                                 </div>
                                 <div class="col-5">
-                                    <label for="">Customer(%)</label>
+                                    <label for="">Customer (%)</label>
                                     <input type="text" class="efm_hrg_jual_non_resep_persen autocurrency form-control"
                                         name="efm_hrg_jual_non_resep_persen" id="efm_hrg_jual_non_resep_persen"
-                                        value="" placeholder="Customer">
+                                        value="" placeholder="Harga Customer">
                                 </div>
                             </div>
                         </div>
                         <div class="form-group form-inline col-6">
                             <div class="row ">
                                 <div class="col-5">
-                                    <label for="">Grosir toko(Rp.)</label>
+                                    <label for="">Grosir / Toko (Rp.)</label>
                                     <input type="text" class="autocurrency efm_hrg_jual_resep form-control"
                                         name="efm_hrg_jual_resep" id="efm_hrg_jual_resep" value=""
-                                        placeholder="Grosir">
+                                        placeholder="Resep">
                                 </div>
                                 <div class="col-5">
-                                    <label for="">Grosir toko(%)</label>
+                                    <label for="">Grosir / Toko (%)</label>
                                     <input type="text" class="autocurrency efm_hrg_jual_resep_persen form-control"
                                         name="efm_hrg_jual_resep_persen" id="efm_hrg_jual_resep_persen" value=""
-                                        placeholder="Grosir">
+                                        placeholder="Harga Grosir/Toko">
                                 </div>
                             </div>
                         </div>
                         <div class="form-group form-inline col-6">
                             <div class="row ">
                                 <div class="col-5">
-                                    <label for="">Nakes</label>
+                                    <label for="">Hrg Nakes</label>
                                     <input type="text" class="autocurrency efm_hrg_jual_nakes form-control"
                                         name="efm_hrg_jual_nakes" id="efm_hrg_jual_nakes" value=""
                                         placeholder="Nakes">
                                 </div>
                                 <div class="col-5">
-                                    <label for="">Nakes</label>
+                                    <label for="">Hrg Nakes</label>
                                     <input type="text" class="autocurrency efm_hrg_jual_nake_persens form-control"
                                         name="efm_hrg_jual_nakes_persen" id="efm_hrg_jual_nakes_persen" value=""
                                         placeholder="Nakes">
@@ -356,45 +382,45 @@
                         <div class="form-group form-inline col-6">
                             <div class="row ">
                                 <div class="col-5">
-                                    <label for="">Customer(Rp.)</label>
+                                    <label for="">Customer (Rp.)</label>
                                     <input type="text" class="fm_hrg_jual_non_resep autocurrency form-control"
                                         name="fm_hrg_jual_non_resep" id="fm_hrg_jual_non_resep" value=""
-                                        placeholder="Customer">
+                                        placeholder=" Harga Customer">
                                 </div>
                                 <div class="col-5">
-                                    <label for="">Customer(%)</label>
+                                    <label for="">Customer (%)</label>
                                     <input type="text" class="fm_hrg_jual_non_resep_persen autocurrency form-control"
                                         name="fm_hrg_jual_non_resep_persen" id="fm_hrg_jual_non_resep_persen"
-                                        value="" placeholder="Customer">
+                                        value="" placeholder=" Harga Customer">
                                 </div>
                             </div>
                         </div>
                         <div class="form-group form-inline col-6">
                             <div class="row ">
                                 <div class="col-5">
-                                    <label for="">Grosir Toko(Rp.)</label>
+                                    <label for="">Grosir / Toko (Rp.)</label>
                                     <input type="text" class="autocurrency fm_hrg_jual_resep form-control"
                                         name="fm_hrg_jual_resep" id="fm_hrg_jual_resep" value=""
-                                        placeholder="Grosir Toko">
+                                        placeholder="Harga Grosir / Toko">
                                 </div>
                                 <div class="col-5">
-                                    <label for="">Grosir Toko(%)</label>
+                                    <label for="">Grosir / Toko (%)</label>
                                     <input type="text" class="autocurrency fm_hrg_jual_resep_persen form-control"
                                         name="fm_hrg_jual_resep_persen" id="fm_hrg_jual_resep_persen" value=""
-                                        placeholder="Grosir Toko">
+                                        placeholder="Harga Grosir / Toko">
                                 </div>
                             </div>
                         </div>
                         <div class="form-group form-inline col-6">
                             <div class="row ">
                                 <div class="col-5">
-                                    <label for="">Nakes (Rp.)</label>
+                                    <label for="">Hrg Nakes (Rp.)</label>
                                     <input type="text" class="autocurrency fm_hrg_jual_nakes form-control"
                                         name="fm_hrg_jual_nakes" id="fm_hrg_jual_nakes" value=""
                                         placeholder="Nakes">
                                 </div>
                                 <div class="col-5">
-                                    <label for="">Nakes (%)</label>
+                                    <label for="">Hrg Nakes (%)</label>
                                     <input type="text" class="autocurrency fm_hrg_jual_nake_persens form-control"
                                         name="fm_hrg_jual_nakes_persen" id="fm_hrg_jual_nakes_persen" value=""
                                         placeholder="Nakes">
@@ -741,6 +767,54 @@
             });
 
 
+            function delObat(dx) {
+                var ids = $(dx).data('id');
+                var obatName = $(dx).data('nmobat');
+
+                $('#deleteModalObat').modal('show');
+                $('#obatNameToDel').text(obatName)
+                $('#kd_obat_del').val(ids)
+            }
+
+            function execDelObat() {
+                var kd_obat = $('#kd_obat_del').val()
+
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: "{{ url('deleteObat') }}/" + kd_obat,
+                    type: "POST",
+                    data: {
+                        fm_kd_obat: kd_obat,
+                    },
+
+                    success: function(response) {
+                        if (response.success) {
+                            toastr.success('Saved!', `${response.message}`, {
+                                timeOut: 2000,
+                                preventDuplicates: true,
+                                positionClass: 'toast-top-right',
+                            });
+                            return window.location.href = "{{ url('mstr-obat') }}";
+                        } else {
+                            toastr.error('Saved!', 'Error!', {
+                                timeOut: 2000,
+                                preventDuplicates: true,
+                                positionClass: 'toast-top-right',
+                            });
+                        }
+                        // error: function(xhr, status, error) {
+                        //     toastr.success('Saved!', status, {
+                        //         timeOut: 2000,
+                        //         preventDuplicates: true,
+                        //         positionClass: 'toast-top-right',
+                        //     });
+                        // },
+                    }
+
+                });
+            }
             // modal Edit
             function getIDObat(tx) {
                 var ids = $(tx).data('id');

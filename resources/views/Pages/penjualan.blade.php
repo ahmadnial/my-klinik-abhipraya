@@ -85,7 +85,8 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="POST" action="{{ url('add-penjualan') }}" onkeydown="return event.key != 'Enter';">
+                <form method="POST" action="{{ url('add-penjualan') }}" onkeydown="return event.key != 'Enter';"
+                    class="needs-validation" novalidate>
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -163,10 +164,11 @@
                                 <select class="form-control" onchange="getTipeTarif()" id="tp_tipe_tarif"
                                     style="width: 100%;" name="tp_tipe_tarif">
                                     <option value="">--Select--</option>
-                                    <option value="Reguler">Customer</option>
-                                    <option value="Resep">Grosir Toko</option>
+                                    <option value="Reguler">Reguler</option>
+                                    <option value="Resep">Resep</option>
                                     <option value="Nakes">Nakes</option>
                                 </select>
+                                <div class="invalid-feedback">Please..dont let me blank</div>
                             </div>
                             <div class="isResepActive form-inline col-sm-9 mb-2">
 
@@ -412,8 +414,8 @@
                                 <select class="tp_tipe_tarife form-control" onchange="getTipeTarifE()"
                                     id="tp_tipe_tarife" style="width: 100%;" name="tp_tipe_tarife">
                                     <option value="">--Select--</option>
-                                    <option value="Reguler">Customer</option>
-                                    <option value="Resep">Grosir Toko</option>
+                                    <option value="Reguler">Reguler</option>
+                                    <option value="Resep">Resep</option>
                                     <option value="Nakes">Nakes</option>
                                 </select>
                             </div>
@@ -588,6 +590,9 @@
                             dom: 'lBfrtip',
                             responsive: true,
                             "bDestroy": true,
+                            "order": [
+                                [1, "dsc"]
+                            ],
                             ajax: {
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -613,7 +618,8 @@
                                     data: 'layanan_order',
                                     name: 'layanan_order',
                                     render: function(data, type, row) {
-                                        if (data == 'Poliklinik Umum') {
+                                        if (data == 'Poliklinik Umum' || data ==
+                                            'Poliklinik Bedah') {
                                             return '<span class="badge badge-success">Resep Klinik</span>';
                                         } else {
                                             return '<span class="badge badge-danger">Apotek</span>';
@@ -724,7 +730,7 @@
                                     </td>
                                     <td>
                                         <input type="text" class="form-control" id="diskon"
-                                            name="diskon[]">
+                                            name="diskon[]" onKeyUp="getDiskon(this)">
                                     </td>
                                     <td>
                                         <input type="text" class="sub_total form-control" id="sub_total"
@@ -756,14 +762,11 @@
                 GrandTotalEdit();
             }
 
-
-
-
             function getTipeTarif() {
                 var tes = $('#tp_tipe_tarif').val();
 
                 if (tes == 'Reguler') {
-                    toastr.info('Harga Customer Selected!', {
+                    toastr.info('Harga Reguler Selected!', {
                         timeOut: 600,
                         // preventDuplicates: true,
                         positionClass: 'toast-top-right',
@@ -810,7 +813,7 @@
 
                 } else if (tes == 'Resep') {
                     $("#getListObatx").empty();
-                    toastr.info('Harga Grosir Toko Selected!', {
+                    toastr.info('Harga Resep Selected!', {
                         timeOut: 600,
                         // preventDuplicates: true,
                         positionClass: 'toast-top-right',
@@ -1118,7 +1121,7 @@
                         </td>
                         <td>
                             <input type="text" class="form-control" id="diskon"
-                                name="diskon[]">
+                                name="diskon[]" onKeyUp="getDiskon(this)" value="0">
                         </td>
                         <td>
                             <input type="text" class="sub_total form-control" id="sub_total"
@@ -1198,6 +1201,22 @@
                     // console.log(hsl);
                     $(parentE).find('#sub_total').val(resultE);
                 }
+                GrandTotal();
+                GrandTotalEdit();
+
+            };
+
+            function getDiskon(d) {
+                let parentT = d.parentElement.parentElement;
+                let diskon = $(parentT).find('#diskon').val();
+                // alert(diskon);
+                let subtotalsementara = $(parentT).find('#sub_total_hidden').val();
+                let hsl = parseFloat(subtotalsementara) - parseFloat(diskon);
+                let resultT = hsl.toFixed(2);
+
+                $(parentT).find('#sub_total').val(resultT);
+                $(parentT).find('#sub_total_hidden_after_tuslah').val(resultT);
+
                 GrandTotal();
                 GrandTotalEdit();
 
@@ -1410,7 +1429,7 @@
                                             </td>
                                               <td>
                                                 <input type="text" class="form-control" id="diskon"
-                                                    name="diskon[]" readonly>
+                                                    name="diskon[]" onKeyUp="getDiskon(this)" readonly>
                                             </td>
                                             <td>
                                                 <input type="text" class="sub_totalEdit form-control" id="sub_total"
@@ -1504,7 +1523,7 @@
                         </td>
                         <td>
                             <input type="text" class="form-control" id="diskon"
-                                name="diskon[]">
+                                name="diskon[]" onKeyUp="getDiskon(this)">
                         </td>
                         <td>
                             <input type="text" class="sub_totalEdit form-control" id="sub_total"
@@ -1624,6 +1643,24 @@
             //         }
             //     });
             // });
+
+            (function() {
+                'use strict'
+
+                var forms = document.querySelectorAll('.needs-validation')
+
+                Array.prototype.slice.call(forms)
+                    .forEach(function(form) {
+                        form.addEventListener('submit', function(event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault()
+                                event.stopPropagation()
+                            }
+
+                            form.classList.add('was-validated')
+                        }, false)
+                    })
+            })()
         </script>
     @endpush
 @endsection

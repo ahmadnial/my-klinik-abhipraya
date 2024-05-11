@@ -1,10 +1,10 @@
 @extends('pages.master')
-@section('mytitle', 'Laporan Pendapatan Klinik')
+@section('mytitle', 'Laporan Apotek')
 @section('konten')
     <section class="content">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title"><i class="fa fa-money">&nbsp;</i>Laporan Pendapatan Klinik Rekap</h3>
+                <h3 class="card-title"><i class="fa fa-truck">&nbsp;</i>Laporan Penjualan Apotek Detail</h3>
             </div>
 
             <div class="card-body">
@@ -13,27 +13,19 @@
                     <div class="input-group-addon">&nbsp; s.d&nbsp;</div>
                     <input type="date" id="date2" class="form-control">
                     <div class="input-group-addon">&nbsp;&nbsp;&nbsp;</div>
-                    <select id="session" class="form-control">
-                        <option value="">Session Poli</option>
-                        <option value="Pagi">Pagi</option>
-                        <option value="Sore">Sore</option>
-                    </select>
-                    <div class="input-group-addon">&nbsp;&nbsp;&nbsp;</div>
-                    <button class="btn btn-success btn-sm" onclick="getDataPendapatan()" id="btnProses">Proses</button>
+                    <button class="btn btn-success" onclick="getDataPenjualan()" id="btnProses">Proses</button>
                 </div>
                 <div>
                     <table id="penjualan" class="table table-hover table-striped">
                         <thead>
                             <tr>
-                                <th>kode Registrasi</th>
-                                <th>Tanggal Keluar</th>
-                                <th>No.RM</th>
-                                <th>Nama</th>
-                                <th>Layanan</th>
-                                <th>Dokter</th>
-                                <th>Session Poli</th>
+                                <th>kode Transaksi</th>
+                                <th>Tanggal Transaksi</th>
+                                <th>QTY</th>
                                 <th>Sub Total</th>
-                                {{-- <th>Dibuat Oleh</th> --}}
+                                {{-- <th>Alasan</th>
+                                <th>Dibuat Oleh</th>
+                                <th></th> --}}
                             </tr>
                         </thead>
                         <tbody id="result">
@@ -41,10 +33,6 @@
                         </tbody>
                         <tfoot align="">
                             <tr>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -63,10 +51,9 @@
 
     @push('scripts')
         <script>
-            function getDataPendapatan() {
+            function getDataPenjualan() {
                 var date1 = $('#date1').val();
                 var date2 = $('#date2').val();
-                var session = $('#session').val();
 
                 if (date1 == '') {
                     toastr.info('Pilih Range Tanggal', 'Info!', {
@@ -80,31 +67,28 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: "{{ url('getLapPendapatanKlinik') }}",
+                        url: "{{ url('getLaporanPenjualanDetail') }}",
                         type: 'GET',
                         data: {
                             date1: date1,
-                            date2: date2,
-                            session: session
+                            date2: date2
                         },
-                        success: function(isDataPendapatan) {
+                        success: function(isDataLaporan) {
                             var sumall = 0;
                             var table = $('#penjualan').DataTable();
                             var rows = table
                                 .rows()
                                 .remove()
                                 .draw();
-                            $.each(isDataPendapatan, function(key, datavalue) {
+                            $.each(isDataLaporan, function(key, datavalue) {
                                 const table = $('#penjualan').DataTable();
-                                var total_pen = datavalue.rk_nilai;
+                                var total_pen = datavalue.sub_total;
                                 var ttlPenjualan = total_pen.toLocaleString('id-ID', {
                                     style: 'currency',
                                     currency: 'IDR'
                                 });
                                 const dataBaru = [
-                                    [datavalue.rk_kd_reg, datavalue.rk_tgl_regout, datavalue.rk_no_mr,
-                                        datavalue.rk_pasienName, datavalue.rk_layanan, datavalue
-                                        .rk_dokter, datavalue.rk_session_poli,
+                                    [datavalue.kd_trs, datavalue.nm_obat, datavalue.qty,
                                         ttlPenjualan
                                     ],
                                 ]
@@ -116,17 +100,13 @@
                                             data[1],
                                             data[2],
                                             data[3],
-                                            data[4],
-                                            data[5],
-                                            data[6],
-                                            data[7]
                                         ]).draw(false)
                                     }
                                 }
 
                                 injectDataBaru()
 
-                                var ttlInt = parseFloat(datavalue.rk_nilai);
+                                var ttlInt = parseFloat(datavalue.sub_total);
                                 sumall += ttlInt;
 
                                 var number = sumall;

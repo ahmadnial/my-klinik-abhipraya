@@ -19,4 +19,4 @@ yarn-error.log
 /.vscode
 /public/web.config
 composer.lock
-/resources/views/Pages/master.blade.php
+# /resources/views/Pages/master.blade.php

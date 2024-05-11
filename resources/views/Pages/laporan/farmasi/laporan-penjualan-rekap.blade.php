@@ -5,7 +5,7 @@
     <section class="content">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title"><i class="fa fa-truck">&nbsp;</i>Laporan Penjualan Apotek Detail Item</h3>
+                <h3 class="card-title"><i class="fa fa-truck">&nbsp;</i>Laporan Penjualan Apotek Rekap</h3>
             </div>
 
             <div class="card-body">
@@ -21,7 +21,13 @@
                         @endforeach
                     </select>
                     <div class="input-group-addon">&nbsp;&nbsp;&nbsp;</div>
-                    <button class="btn btn-success" onclick="getDataPenjualan()" id="btnProses">Proses</button>
+                    <button class="btn btn-success btn-sm" onclick="getDataPenjualan()" id="btnProses">Proses</button>
+                    <div class="spinLoad d-flex align-items-center ml-4">
+                        {{-- <strong>Loading...</strong> --}}
+                        <div class="spinLoad spinner-border text-success ms-auto" role="status" aria-hidden="true"
+                            id="spinLoad">
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <table id="penjualan" class="table table-hover table-striped">
@@ -33,7 +39,9 @@
                                 <th>Nama Barang</th>
                                 <th>QTY</th>
                                 <th>Satuan</th>
-                                <th>Harga Satuan</th>
+                                <th>Harga Satuan(HNA)</th>
+                                <th>Harga Satuan(Jual)</th>
+                                <th>Sub ttl HNA</th>
                                 <th>Sub Total</th>
                             </tr>
                         </thead>
@@ -50,6 +58,8 @@
                                 </td> --}}
                                 <th></th>
                                 <th></th>
+                                <th></th>
+                                <th id="HNA"></th>
                                 <th id="grandTTL"></th>
                             </tr>
                         </tfoot>
@@ -63,6 +73,7 @@
     @push('scripts')
         <script>
             function getDataPenjualan() {
+                $('#spinLoad').show();
                 var date1 = $('#date1').val();
                 var date2 = $('#date2').val();
                 var user = $('#user').val();
@@ -79,7 +90,7 @@
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
-                        url: "{{ url('getLaporanPenjualanDetail') }}",
+                        url: "{{ url('getLaporanPenjualanRekap') }}",
                         type: 'GET',
                         data: {
                             date1: date1,
@@ -87,7 +98,10 @@
                             user: user
                         },
                         success: function(isDataLaporanDetail) {
+                            $('#HNA').empty();
+                            $('#grandTTL').empty();
                             var sumall = 0;
+                            var sumallHna = 0;
                             var table = $('#penjualan').DataTable();
                             var rows = table
                                 .rows()
@@ -96,18 +110,39 @@
                             $.each(isDataLaporanDetail, function(key, datavalue) {
                                 const table = $('#penjualan').DataTable();
 
-                                var hrg_obatC = datavalue.hrg_obat;
+                                var hrg_obatC = parseFloat(datavalue.hrg_obat);
+
                                 var hrg_obatShow = hrg_obatC.toLocaleString('id-ID', {
                                     style: 'currency',
                                     currency: 'IDR'
                                 });
 
-                                var perkalian = datavalue.total * datavalue.hrg_obat;
+                                var hrg_obatHnaRaw = parseFloat(datavalue.fm_hrg_beli_detail);
+
+                                var hrg_obatHnaShow = hrg_obatHnaRaw.toLocaleString('id-ID', {
+                                    style: 'currency',
+                                    currency: 'IDR'
+                                });
+
+                                var dataRaw = datavalue.total * datavalue.hrg_obat;
+
+                                var hnaRaw = parseFloat(datavalue.fm_hrg_beli_detail * datavalue.total);
+
+                                var hna = hnaRaw.toLocaleString('id-ID', {
+                                    style: 'currency',
+                                    currency: 'IDR'
+                                });
+
+                                var subtotal = dataRaw.toLocaleString('id-ID', {
+                                    style: 'currency',
+                                    currency: 'IDR'
+                                });
 
                                 const dataBaru = [
                                     [datavalue.kd_obat,
                                         datavalue.nm_obat, datavalue.total, datavalue.satuan,
-                                        hrg_obatShow, perkalian
+                                        hrg_obatHnaShow,
+                                        hrg_obatShow, hna, subtotal
                                     ],
                                 ]
 
@@ -120,15 +155,24 @@
                                             data[3],
                                             data[4],
                                             data[5],
-                                            // data[6],
-                                            // data[7],
+                                            data[6],
+                                            data[7],
                                         ]).draw(false)
                                     }
                                 }
 
                                 injectDataBaru()
 
-                                var ttlInt = parseFloat(perkalian);
+                                var ttlIntHna = parseFloat(hnaRaw);
+                                sumallHna += ttlIntHna;
+
+                                var numberHna = sumallHna;
+                                var formattedNumberHna = numberHna.toLocaleString('id-ID', {
+                                    style: 'currency',
+                                    currency: 'IDR'
+                                });
+
+                                var ttlInt = parseFloat(dataRaw);
                                 sumall += ttlInt;
 
                                 var number = sumall;
@@ -137,6 +181,7 @@
                                     currency: 'IDR'
                                 });
 
+                                document.getElementById("HNA").innerHTML = formattedNumberHna;
                                 document.getElementById("grandTTL").innerHTML = formattedNumber;
 
                                 toastr.success('Data Load Complete!', 'Complete!', {
@@ -144,24 +189,23 @@
                                     preventDuplicates: true,
                                     positionClass: 'toast-top-right',
                                 });
-                                $('#date1').val('');
-                                $('#date2').val('');
+                                // $('#date1').val('');
+                                // $('#date2').val('');
                                 $('#user').val('');
                             })
+                            $('#spinLoad').hide();
                         }
                     })
                 }
-
-                // drawCallback: function() {
-                // var sum = $('#penjualan').DataTable().column(3).data().sum();
-                // $('#grandttl').html(sum);
-                // }
             }
-
-
-            // var someTableDT = $("#penjualan").on("draw.dt", function() {
-            //     $(this).find(".dataTables_empty").parents('tbody').empty();
-            // }).DataTable
+            $('.spinLoad')
+                .hide() // Hide it initially
+                .ajaxStart(function() {
+                    $(this).show();
+                })
+                .ajaxStop(function() {
+                    $(this).hide();
+                });
         </script>
     @endpush
 @endsection

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\arsipController;
 use App\Http\Controllers\AssesmentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
@@ -16,6 +17,7 @@ use App\Http\Controllers\WilayahController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HutangSupplierController;
+use App\Http\Controllers\lapAccountingController;
 use App\Http\Controllers\settingController;
 use App\Http\Controllers\RedirectController;
 
@@ -86,6 +88,9 @@ Route::group(['middleware' => ['auth', 'checkrole:1']], function () {
 Route::group(['middleware' => ['auth', 'checkrole:1,2']], function () {
     Route::get('template-order-resep', [mastersatuController::class, 'templateResep'])->name('template-order-resep');
     Route::post('add-template-resep', [mastersatuController::class, 'addTemplateResep'])->name('add-template-resep');
+    Route::get('getDetailTemplate/{kdto}', [mastersatuController::class, 'getDetailTemplate'])->name('getDetailTemplate');
+    Route::post('edit-template', [mastersatuController::class, 'editTemplateResep'])->name('edit-template');
+    Route::post('delete-template', [mastersatuController::class, 'deleteTemplateResep'])->name('delete-template');
 });
 
 // VIEW AFTER POST
@@ -119,6 +124,11 @@ Route::group(['middleware' => ['auth', 'checkrole:1,2']], function () {
     Route::post('chartDelete/{chartid}', [TindakanController::class, 'chartDelete'])->name('chartDelete');
     Route::get('getTemplateOrder', [TindakanController::class, 'getTemplateOrder'])->name('getTemplateOrder');
     Route::get('selectTemplateOrder', [TindakanController::class, 'selectTemplateOrder'])->name('selectTemplateOrder');
+
+    Route::get('arsip', [arsipController::class, 'arsip'])->name('arsip');
+    Route::get('regSearchArs', [arsipController::class, 'regSearchArs'])->name('regSearchArs');
+    Route::get('getListChart/{fs_mr}', [arsipController::class, 'getListChart'])->name('getListChart');
+    Route::get('getListChartDetail/{chart_id}', [arsipController::class, 'getListChartDetail'])->name('getListChartDetail');
 });
 
 
@@ -146,6 +156,7 @@ Route::group(['middleware' => ['auth', 'checkrole:1,4']], function () {
     Route::post('add-mstr-supplier', [masterFarmasiController::class, 'supplierCreate'])->name('add-mstr-supplier');
     Route::post('add-mstr-obat', [masterFarmasiController::class, 'obatCreate'])->name('add-mstr-obat');
     Route::post('edit-mstr-obat/{efmkdobat}', [masterFarmasiController::class, 'obatEdit'])->name('edit-mstr-obat');
+    Route::post('deleteObat/{kd_obat}', [masterFarmasiController::class, 'obatDelete'])->name('deleteObat');
 });
 
 // DELETE MSTR FARMASI
@@ -172,6 +183,8 @@ Route::group(['middleware' => ['auth', 'checkrole:1,4']], function () {
     Route::get('getObatList/{obat}', [poDoController::class, 'getObatList'])->name('getObatList');
     Route::get('get-data-do/{kd_do}', [poDoController::class, 'getDOList'])->name('get-data-do');
     Route::get('getListObatDO', [poDoController::class, 'getListObatDO'])->name('getListObatDO');
+    Route::get('getMonthAdjusment', [poDoController::class, 'getMonthAdjusment'])->name('getMonthAdjusment');
+    Route::get('getDetailAdjusment/{kd_trs}', [poDoController::class, 'getDetailAdjusment'])->name('getDetailAdjusment');
 });
 
 // CREATE PO-DO + ADJ
@@ -210,9 +223,12 @@ Route::group(['middleware' => ['auth', 'checkrole:1,4,3']], function () {
     // Route::get('/redirect', [RedirectController::class, 'cek']);
     Route::get('kasir-poli', [kasirPoliController::class, 'kasirPoli'])->name('kasir-poli');
     Route::get('SearchRegisterKsr/{kdReg}', [kasirPoliController::class, 'xregisterSearch'])->name('SearchRegisterKsr');
+    Route::get('getMonthRegOut', [kasirPoliController::class, 'getMonthRegOut'])->name('getMonthRegOut');
+    Route::get('getDetailRegOut/{kd_trs}', [kasirPoliController::class, 'getDetailRegOut'])->name('getDetailRegOut');
 
     Route::get('kasir-apotek', [kasirPoliController::class, 'kasirApotek'])->name('kasir-apotek');
     Route::post('regout', [kasirPoliController::class, 'regOut'])->name('regout');
+    Route::post('EditRegout', [kasirPoliController::class, 'EditRegout'])->name('EditRegout');
 });
 
 
@@ -227,9 +243,10 @@ Route::controller(WilayahController::class)->group(function () {
 //Assesment Awal
 // Route::controller(AssesmentController::class)->group(function () {
 Route::group(['middleware' => ['auth', 'checkrole:1,2']], function () {
-    // Route::get('/', [HomeController::class, 'index']);
-    // Route::get('/redirect', [RedirectController::class, 'cek']);
     Route::get('assesment-awal', [AssesmentController::class, 'assAwal'])->name('assesment-awal');
+    Route::post('addAssesment', [AssesmentController::class, 'createAssesment'])->name('addAssesment');
+    Route::get('getLabelAssHdr/{noMr}', [AssesmentController::class, 'getLabelAssHdr'])->name('getLabelAssHdr');
+    Route::get('getAssDetail/{assId}', [AssesmentController::class, 'getAssDetail'])->name('getAssDetail');
 });
 
 //Laporan Farmasi
@@ -237,9 +254,9 @@ Route::group(['middleware' => ['auth', 'checkrole:1,2']], function () {
 Route::group(['middleware' => ['auth', 'checkrole:1,4']], function () {
     // Route::get('/', [HomeController::class, 'index']);
     // Route::get('/redirect', [RedirectController::class, 'cek']);
-    Route::get('laporan-penjualan-farmasi', [LapFarmasiController::class, 'lapPenjualanFarmasi'])->name('laporan-penjualan-farmasi');
+    Route::get('laporan-penjualan-farmasi-rekap', [LapFarmasiController::class, 'lapPenjualanFarmasiRekap'])->name('laporan-penjualan-farmasi-rekap');
     Route::get('laporan-penjualan-farmasi-detail', [LapFarmasiController::class, 'lapPenjualanFarmasiDetail'])->name('laporan-penjualan-farmasi-detail');
-    Route::get('getLaporanPenjualan', [LapFarmasiController::class, 'getLapPenjualan'])->name('getLaporanPenjualan');
+    Route::get('getLaporanPenjualanRekap', [LapFarmasiController::class, 'getLapPenjualanRekap'])->name('getLaporanPenjualanRekap');
     Route::get('getLaporanPenjualanDetail', [LapFarmasiController::class, 'getLapPenjualanDetail'])->name('getLaporanPenjualanDetail');
     Route::get('buku-stok-rekap', [LapFarmasiController::class, 'bukuStok'])->name('buku-stok-rekap');
     Route::get('getBukuStok', [LapFarmasiController::class, 'getBukuStok'])->name('getBukuStok');
@@ -268,6 +285,9 @@ Route::group(['middleware' => ['auth', 'checkrole:1,4,6']], function () {
     Route::get('getMonthPelunasan', [HutangSupplierController::class, 'getMonthPelunasan'])->name('getMonthPelunasan');
     Route::get('info-hutang', [HutangSupplierController::class, 'infoHutang'])->name('info-hutang');
     Route::get('getinfohutang', [HutangSupplierController::class, 'getInfoHutang'])->name('getinfohutang');
+
+    Route::get('laporan-laba', [lapAccountingController::class, 'laporanLaba'])->name('laporanLaba');
+    Route::get('getLaporanLR', [lapAccountingController::class, 'laporanLR'])->name('getLaporanLR');
 });
 
 //Setting / Tools

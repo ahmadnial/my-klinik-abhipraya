@@ -79,7 +79,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ url('/create-dasos') }}" method="post">
+                <form action="{{ url('/create-dasos') }}" method="post" class="needs-validation" novalidate>
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -90,7 +90,11 @@
                             </div>
                             <div class="form-group col-sm-6">
                                 <label for="">Nama</label>
-                                <input type="text" class="form-control" name="fs_nama" placeholder="Nama Pasien">
+                                <input type="text" class="form-control" name="fs_nama" placeholder="Nama Pasien"
+                                    required>
+                                <div class="invalid-feedback">
+                                    Please..dont let me blank
+                                </div>
                             </div>
                             <div class="form-group col-sm-6">
                                 <label for="">Tempat Lahir</label>
@@ -100,15 +104,21 @@
                             <div class="form-group col-sm-6">
                                 <label for="">Tanggal Lahir</label>
                                 <input type="date" class="form-control" name="fs_tgl_lahir"
-                                    placeholder="Tanggal Lahir Pasien">
+                                    placeholder="Tanggal Lahir Pasien" required>
+                                <div class="invalid-feedback">
+                                    Please..dont let me blank
+                                </div>
                             </div>
                             <div class="form-group col-sm-6">
                                 <label for="">Jenis Kelamin</label>
-                                <select name="fs_jenis_kelamin" id="fs_jenis_kelamin" class="form-control">
+                                <select name="fs_jenis_kelamin" id="fs_jenis_kelamin" class="form-control" required>
                                     <option value="">--Select--</option>
                                     <option value="Laki-laki">Laki-Laki</option>
                                     <option value="Perempuan">Perempuan</option>
                                 </select>
+                                <div class="invalid-feedback">
+                                    Please..dont let me blank
+                                </div>
                             </div>
                             <div class="form-group col-sm-6">
                                 <label for="">Jenis Identitas</label>
@@ -556,6 +566,7 @@
                         $('#efs_tgl_lahir').val(dasos.fs_tgl_lahir);
                         $('#efs_jenis_kelamin').val(dasos.fs_jenis_kelamin);
                         $('#efs_jenis_identitas').val(dasos.fs_jenis_identitas);
+                        $('#efs_no_identitas').val(dasos.fs_no_identitas);
                         $('#efs_nm_ibu_kandung').val(dasos.fs_nm_ibu_kandung);
                         $('#efs_alamat').val(dasos.fs_alamat);
                         $('#efs_suku').val(dasos.fs_suku);
@@ -588,6 +599,7 @@
             var efs_tgl_lahir = $('#efs_tgl_lahir').val();
             var efs_jenis_kelamin = $('#efs_jenis_kelamin').val();
             var efs_jenis_identitas = $('#efs_jenis_identitas').val();
+            var efs_no_identitas = $('#efs_no_identitas').val();
             var efs_nm_ibu_kandung = $('#efs_nm_ibu_kandung').val();
             var efs_alamat = $('#efs_alamat').val();
             var efs_suku = $('#efs_suku').val();
@@ -612,6 +624,7 @@
                     fs_tgl_lahir: efs_tgl_lahir,
                     fs_jenis_kelamin: efs_jenis_kelamin,
                     fs_jenis_identitas: efs_jenis_identitas,
+                    fs_no_identitas: efs_no_identitas,
                     fs_nm_ibu_kandung: efs_nm_ibu_kandung,
                     fs_alamat: efs_alamat,
                     fs_suku: efs_suku,
@@ -650,6 +663,7 @@
             $('#alldss').DataTable({
                 processing: true,
                 serverSide: true,
+                dom: 'lBfrtip',
                 responsive: true,
                 "bDestroy": true,
                 ajax: "{{ url('getAllDasos') }}",
@@ -677,8 +691,14 @@
                         data: 'action',
                         name: 'action'
                     },
-                ]
-            });
+                ],
+                "responsive": true,
+                "paging": true,
+                "searching": true,
+                "lengthChange": true,
+                "autoWidth": true,
+                "buttons": ["copy", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#alldss_wrapper .col-md-6:eq(0)');
         };
 
         getAllDss();
@@ -720,5 +740,23 @@
                 onChangeSelect('{{ route('villages') }}', $(this).val(), 'desa');
             })
         });
+
+        (function() {
+            'use strict'
+
+            var forms = document.querySelectorAll('.needs-validation')
+
+            Array.prototype.slice.call(forms)
+                .forEach(function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
     </script>
 @endpush

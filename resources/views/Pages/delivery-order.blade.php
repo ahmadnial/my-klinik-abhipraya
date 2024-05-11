@@ -75,8 +75,15 @@
         .scrollable-table {
             /* overflow-y: initial !important */
             max-height: 370px;
-            overflow-y: auto;
+            /* max-width: 970px; */
+            overflow-y: scroll;
+            white-space: nowrap;
+            overflow-x: scroll;
         }
+
+        /* th {
+                                                                                                    min-width: 180px;
+                                                                                                } */
 
         .modal-footer {
             position: sticky;
@@ -96,7 +103,8 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="POST" action="{{ url('add-delivery-order') }}" onkeydown="return event.key != 'Enter';">
+                <form method="POST" action="{{ url('add-delivery-order') }}" onkeydown="return event.key != 'Enter';"
+                    class="needs-validation" novalidate>
                     @csrf
                     <div class="modal-body">
                         <div class="row">
@@ -105,15 +113,21 @@
                                 <input type="text" class="form-control" name="do_hdr_kd" id="do_hdr_kd"
                                     value="{{ $noRef }}" readonly>
                             </div>
-                            <div class="form-group col-sm-2">
-                                <label for="">Tanggal Transaksi</label>
+                            <div class="form-group col-sm-2 has-validation">
+                                <label for="tanggal_trs" class="form-label">Tanggal Transaksi</label>
                                 <input type="date" class="form-control" name="tanggal_trs" id="tanggal_trs"
                                     value="{{ $dateNow }}" required>
+                                <div class="invalid-feedback">
+                                    Please..dont let me blank
+                                </div>
                             </div>
                             <div class="form-group col-sm-3">
                                 <label for="">Nomor Faktur</label>
                                 <input type="text" class="form-control" name="do_hdr_no_faktur" id="do_hdr_no_faktur"
-                                    value="" placeholder="Input Nomor Faktur" required>
+                                    value="{{ old('do_hdr_no_faktur') }}" placeholder="Input Nomor Faktur" required>
+                                <div class="invalid-feedback">
+                                    Please..dont let me blank
+                                </div>
                             </div>
                             <div class="form-group col-sm-2">
                                 <label for="">Supplier</label>
@@ -124,12 +138,16 @@
                                         <option value="{{ $sp->fm_nm_supplier }}">{{ $sp->fm_nm_supplier }}</option>
                                     @endforeach
                                 </select>
+                                <div class="invalid-feedback">Please..dont let me blank</div>
                             </div>
                             <div class="form-group">
                                 <label class="form-check-label" for="flexCheckDefault">
                                     <input class="checkbox form-check-input" type="checkbox" value=""
                                         id="flexCheckDefault" onchange="getTglTempo();">
                                     Kredit
+                                    <div class="invalid-feedback">
+                                        Please..dont let me blank
+                                    </div>
                                 </label>
                             </div>
                             <div class="tglJatuhtempo form-group col-sm-2">
@@ -160,21 +178,23 @@
                     {{-- <hr> --}}
                     <div class="scrollable-table">
                         <table class="table table-bordered" id="deliverOrder">
-                            <thead>
+                            <thead style="background-color: aliceblue">
                                 <tr>
                                     {{-- <th>Kode Obat</th> --}}
                                     <th width="250px">Obat</th>
                                     <th>Sat.Beli</th>
-                                    <th>Qty</th>
-                                    <th>Isi</th>
-                                    <th width="50px">Sat.Jual</th>
                                     <th>Hrg.Beli</th>
+                                    <th>Qty</th>
+                                    <th width="60px">Isi</th>
+                                    <th width="90px">Sat.Jual</th>
                                     <th>Disc %</th>
-                                    <th>Discount</th>
-                                    <th>Pajak</th>
-                                    <th width="60px">Tgl.Exp</th>
-                                    <th>Batch Number</th>
-                                    <th>Sub Total</th>
+                                    <th>Disc</th>
+                                    <th width="100px">Pajak</th>
+                                    <th width="40px">Tgl.Exp</th>
+                                    <th>Batch No.</th>
+                                    <th width="110px">Sub Total</th>
+                                    <th>updt hrg</th>
+                                    <th></th>
                                 </tr>
                             </thead>
 
@@ -186,21 +206,19 @@
                         </table>
                     </div>
                     <hr>
-                    <div class="float-right col-4">
-                        <div class="float-right col-4">
-                            <input type="text" class="form-control float-right" name=""
-                                id="do_hdr_total_faktur_show_only" value="" readonly>
-                            <input type="hidden" class="form-control float-right" name="do_hdr_total_faktur"
-                                id="do_hdr_total_faktur" value="" readonly>
-                        </div>
-                        {{-- <div class="float-right">
-                        <button class="btn btn-xs btn-info" id="addRow">Tambah Barang</button>
-                    </div> --}}
-                    </div>
+
                     <br>
                     <br>
                     {{-- <hr> --}}
                     <div class="modal-footer">
+                        <div class="float-right col-4">
+                            <div class="float-right col-4">
+                                <input type="text" class="form-control float-right" name=""
+                                    id="do_hdr_total_faktur_show_only" value="" readonly>
+                                <input type="hidden" class="form-control float-right" name="do_hdr_total_faktur"
+                                    id="do_hdr_total_faktur" value="" readonly>
+                            </div>
+                        </div>
                         <button type="submit" id="buat" class="btn btn-success float-right"><i
                                 class="fa fa-save"></i>&nbsp;Save
                         </button>
@@ -408,6 +426,10 @@
                                     name="do_satuan_pembelian[]" value="${getSatBeli}" readonly>
                             </td>
                             <td>
+                                <input type="text" class="do_hrg_beli form-control" id="do_hrg_beli" name="do_hrg_beli[]"
+                                 value="${getHrgBeli}">
+                            </td>
+                            <td>
                                 <input type="text" class="do_qty form-control" id="do_qty" onKeyUp="getQTY(this)" name="do_qty[]">
                             </td>
                             <td>
@@ -419,30 +441,33 @@
                                     value="${getSatJual}" readonly>
                             </td>
                             <td>
-                                <input type="text" class="do_hrg_beli form-control" id="do_hrg_beli" name="do_hrg_beli[]"
-                                 value="${getHrgBeli}" readonly>
-                            </td>
-                            <td>
                             <input type="text" class="form-control" name="do_diskon_prosen[]" id="do_diskon_prosen" onKeyDown="discProsen(this)">
                             </td>
                             <td>
                                 <input type="text" class="form-control" id="do_diskon" name="do_diskon[]" onKeyDown="discRp(this)">
                             </td>
                             <td>
-                                <select type="text" class="form-control" id="do_pajak" name="do_pajak[]" onClick="pajakPPN(this)">
+                                <select type="text" class="form-control" id="do_pajak" name="do_pajak[]" onChange="pajakPPN(this)">
                                     <option value="Tanpa Pajak">Tanpa Pajak</option>
                                     <option value="11">PPN 11%</option>
                                 </select>
                             </td>
                             <td>
-                                <input type="date" class="form-control" id="do_tgl_exp" name="do_tgl_exp[]">
+                                <input type="date" class="form-control" id="do_tgl_exp" name="do_tgl_exp[]" required>
                             </td>
                             <td>
                                 <input type="text" class="form-control" id="do_batch_number"
-                                    name="do_batch_number[]">
+                                    name="do_batch_number[]" required>
                             </td>
                             <td>
                                 <input type="text" class="do_sub_total form-control" id="do_sub_total" name="do_sub_total[]">
+                            </td>
+                            <td>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="updateHrg" name="updateHrg[]" value="${getKdObat}">
+                                    <label class="form-check-label" for="flexCheckDefault">
+                                    </label>
+                                </div>
                             </td>
                             <td>
                                  <button type="button" class="remove btn btn-xs btn-danger"><i class="fa fa-trash" onclick="deleteRow(this)"></i></button>
@@ -476,9 +501,11 @@
             };
 
             function discProsen(x) {
-                if (event.keyCode == 13) {
-                    var parentx = x.parentElement.parentElement;
-                    var tdsc = $(parentx).find('#do_diskon_prosen').val();
+                var parentx = x.parentElement.parentElement;
+                var tdsc = $(parentx).find('#do_diskon_prosen').val();
+                if (event.keyCode == 13 && tdsc != '') {
+                    // var parentx = x.parentElement.parentElement;
+                    // var tdsc = $(parentx).find('#do_diskon_prosen').val();
                     // var price = $(parentx).find('#do_sub_total').val();
                     var subttl = $(parentx).find('#do_sub_total').val();
                     var calc = (tdsc / 100) * subttl;
@@ -491,16 +518,24 @@
                     var hasil = parseInt(subttl) - parseInt(dsc);
 
                     $(parentx).find('#do_sub_total').val(hasil);
-                    GrandTotal();
 
                     // console.log(result);
+                } else if (event.keyCode == 13 && tdsc == '') {
+                    var qty = $(parentx).find('#do_qty').val();
+                    var hrgBeli = $(parentx).find('#do_hrg_beli').val();
+                    var recalc = hrgBeli * qty;
+                    var toDecimalFalse = recalc.toFixed(2);
+
+                    $(parentx).find('#do_sub_total').val(toDecimalFalse);
+                    $(parentx).find('#do_diskon').val('');
                 }
+                GrandTotal();
             }
 
             function discRp(r) {
                 var parentR = r.parentElement.parentElement;
-                if (event.keyCode == 13) {
-                    var tdscr = $(parentR).find('#do_diskon').val();
+                var tdscr = $(parentR).find('#do_diskon').val();
+                if (event.keyCode == 13 && tdscr != '') {
                     var subttl = $(parentR).find('#do_sub_total').val();
                     var calc = (tdscr / subttl) * 100;
                     var toFix = subttl - tdscr;
@@ -514,11 +549,16 @@
                         $(parentR).find('#do_sub_total').val(subttl);
                         // $(parentR).find('#do_diskon_prosen').val();
                     }
-                    GrandTotal();
+                } else if (event.keyCode == 13 && tdscr == '') {
+                    var qty = $(parentR).find('#do_qty').val();
+                    var hrgBeli = $(parentR).find('#do_hrg_beli').val();
+                    var recalc = hrgBeli * qty;
+                    var toDecimalFalse = recalc.toFixed(2);
 
-                    // console.log(tdscr);
+                    $(parentR).find('#do_sub_total').val(toDecimalFalse);
+                    $(parentR).find('#do_diskon_prosen').val('');
                 }
-
+                GrandTotal();
             }
 
             function GrandTotal() {
@@ -543,21 +583,27 @@
 
 
             function pajakPPN(p) {
-                alert('Belum Ready');
                 var parentP = p.parentElement.parentElement;
+                var pajak = $(parentP).find('#do_pajak').val();
+                var subttl = $(parentP).find('#do_sub_total').val();
+                if (pajak == '11') {
+                    var calc = subttl * (11 / 100);
+                    var toFix = parseFloat(subttl) + parseFloat(calc);
+                    var toDecimal = toFix.toFixed(2);
+                    $(parentP).find('#do_sub_total').val(toDecimal);
+                    // console.log(toDecimal)
+                } else {
+                    var qty = $(parentP).find('#do_qty').val();
+                    var hrgBeli = $(parentP).find('#do_hrg_beli').val();
+                    var recalc = hrgBeli * qty;
+                    var toDecimalFalse = recalc.toFixed(2);
+
+                    $(parentP).find('#do_sub_total').val(toDecimalFalse);
+                }
+                GrandTotal();
             }
-            // var parentR = r.parentElement.parentElement;
-            // var price = $(parentR).find('#do_sub_total').val();
-            // var subttl = $(parentR).find('#do_sub_total').val();
-            // var calc = (tdscr / price) * 100;
-            // var result = calc.toFixed(2);
-            // var discNow = $(this).val();
-            // console.log(subttl - tdscr);
 
-            // $(parentR).find('#do_diskon_prosen').val(result);
-            // $(parentR).find('#do_sub_total').val(subttl - tdscr);
 
-            // console.log(result);
             // Ajax Search Obat
             var path = "{{ route('obatSearch') }}";
 
@@ -951,7 +997,7 @@
                                                     <input type="text" class="form-control" id="do_diskon" name="do_diskon[]" onKeyDown="discRp(this)" value="${toDetail[i].do_diskon}" readonly>
                                                 </td>
                                                 <td>
-                                                    <select type="text" class="form-control" id="do_pajak" name="do_pajak[]" onClick="pajakPPN(this)" readonly>
+                                                    <select type="text" class="form-control" id="do_pajak" name="do_pajak[]" onChange="pajakPPN(this)" readonly>
                                                         <option value="${toDetail[i].do_pajak}">${toDetail[i].do_pajak}</option>
                                                         <option value="">Tanpa Pajak</option>
                                                         <option value="11">PPN 11%</option>
@@ -1106,6 +1152,24 @@
                     return getBarang();
                 }
             });
+
+            (function() {
+                'use strict'
+
+                var forms = document.querySelectorAll('.needs-validation')
+
+                Array.prototype.slice.call(forms)
+                    .forEach(function(form) {
+                        form.addEventListener('submit', function(event) {
+                            if (!form.checkValidity()) {
+                                event.preventDefault()
+                                event.stopPropagation()
+                            }
+
+                            form.classList.add('was-validated')
+                        }, false)
+                    })
+            })()
         </script>
     @endpush
 @endsection

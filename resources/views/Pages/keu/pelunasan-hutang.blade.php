@@ -21,7 +21,7 @@
                         <input type="month" name="monthPelunasan" id="monthPelunasan" onchange="getMonthPelunasan()"
                             class="form-control form-control-sm col-2">
                     </div>
-                    <table id="example1" class="table table-hover">
+                    <table id="example" class="table table-hover">
                         <thead class="">
                             <tr>
                                 <th>Tanggal Trs</th>
@@ -156,20 +156,17 @@
                     </div>
                     <hr>
                     <div class="float-right col-4">
-                        <div class="float-right col-4">
+                    </div>
+                    {{-- <br>
+                        <br> --}}
+                    {{-- <hr> --}}
+                    <div class="modal-footer">
+                        <div class="float-right col-2">
                             <input type="text" class="form-control float-right" name=""
                                 id="pl_total_bayar_show_only" value="" readonly>
                             <input type="hidden" class="form-control float-right" name="pl_total_bayar" id="pl_total_bayar"
                                 value="" readonly>
                         </div>
-                        {{-- <div class="float-right">
-                        <button class="btn btn-xs btn-info" id="addRow">Tambah Barang</button>
-                    </div> --}}
-                    </div>
-                    <br>
-                    <br>
-                    {{-- <hr> --}}
-                    <div class="modal-footer">
                         <button type="submit" id="buat" class="btn btn-success float-right"><i
                                 class="fa fa-save"></i>&nbsp;Save
                         </button>
@@ -216,6 +213,7 @@
                             <tr>
                                 <th>Kode Transaksi</th>
                                 <th>No.Faktur</th>
+                                <th>Nama Supplier</th>
                                 <th>Tanggal</th>
                                 <th>Hutang Awal</th>
                                 <th>Pembayaran</th>
@@ -273,6 +271,10 @@
                                 {
                                     data: 'hs_no_faktur',
                                     name: 'hs_no_faktur'
+                                },
+                                {
+                                    data: 'hs_supplier',
+                                    name: 'hs_supplier'
                                 },
                                 {
                                     data: 'hs_tanggal_hutang',
@@ -341,7 +343,7 @@
                                  onKeyup="getPembayaran(this)">
                             </td>
                             <td>
-                            <input type="text" class="form-control" name="pl_potongan" id="pl_potongan" onKeyDown="PotonganHutang(this)">
+                            <input type="text" class="form-control" name="pl_potongan" id="pl_potongan" value="0" onKeyDown="PotonganHutang(this)">
                             </td>
                             <td>
                                 <input type="text" class="form-control" id="pl_hutang_akhir" name="pl_hutang_akhir" readonly value="${getHutangAwal}">
@@ -429,7 +431,7 @@
                 const dataBulan = $('#monthPelunasan').val();
                 $.ajax({
                     success: function() {
-                        $('#example1').DataTable({
+                        $('#example').DataTable({
                             processing: true,
                             serverSide: true,
                             dom: 'lBfrtip',
@@ -527,8 +529,14 @@
                                         return intVal(a) + intVal(b);
                                     }, 0);
 
+                                var ttlInt = parseFloat(pageTotal);
+
+                                var formattedNumber = ttlInt.toLocaleString('id-ID', {
+                                    style: 'currency',
+                                    currency: 'IDR'
+                                });
                                 $(api.column(7).footer()).html(
-                                    'Total Pembayaran : Rp.' + pageTotal
+                                    'Total Pembayaran : ' + formattedNumber
                                 );
                             },
                             "responsive": true,

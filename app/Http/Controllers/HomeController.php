@@ -73,7 +73,8 @@ class HomeController extends Controller
         } else {
             $continue = registrasiCreate::withTrashed()->latest('created_at')->first();
             // $continue = DB::table('ta_registrasi')->withTrashed()->latest('created_at')->first();
-            $de = substr($continue->fr_kd_reg, -3);
+            // $de = substr($continue->fr_kd_reg, -8); //old way
+            $de = preg_replace('/[^0-9]/', '', $continue->fr_kd_reg);
             $kd_reg = 'RG' . str_pad(($de + 1), 8, '0', STR_PAD_LEFT);
         };
 
@@ -103,6 +104,7 @@ class HomeController extends Controller
         if ($request->filled('q')) {
             $isdata = dataSosialCreate::select("fs_mr", "fs_nama", "fs_alamat", "fs_tgl_lahir")
                 ->where('fs_nama', 'LIKE', '%' . $request->get('q') . '%')
+                ->orWhere('fs_mr', 'LIKE', '%' . $request->get('q') . '%')
                 ->get();
         }
         // dd($data);

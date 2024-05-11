@@ -9,19 +9,22 @@
 
             <div class="card-body">
                 <div class="col-4 mb-4 input-group input-daterange" id="buttonGetStok">
-                    {{-- <input type="date" id="date1" class="form-control">
-                    <div class="input-group-addon">&nbsp; s.d&nbsp;</div>
-                    <input type="date" id="date2" class="form-control">
-                    <div class="input-group-addon">&nbsp;&nbsp;&nbsp;</div> --}}
                     <button class="btn btn-success" onclick="getDataPenjualan()" id="btnProses">Proses</button>
+                    <div class="spinLoad d-flex align-items-center ml-4">
+                        {{-- <strong>Loading...</strong> --}}
+                        <div class="spinLoad spinner-border text-success ms-auto" role="status" aria-hidden="true"
+                            id="spinLoad">
+                        </div>
+                    </div>
                 </div>
                 <div>
-                    <table id="bukustok" class="table table-hover table-striped">
+
+                    <table id="example1" class="table table-hover table-striped">
                         <thead>
                             <tr>
                                 <th>kode Barang</th>
                                 <th>Nama Barang</th>
-                                <th>Qty</th>
+                                <th>Qty Stok</th>
                                 <th>Satuan</th>
                                 <th>Harga Beli Satuan</th>
                                 <th>Nilai Persediaan</th>
@@ -50,6 +53,7 @@
     @push('scripts')
         <script>
             function getDataPenjualan() {
+                $('#spinLoad').show();
                 var date1 = $('#date1').val();
                 var date2 = $('#date2').val();
 
@@ -76,7 +80,7 @@
                             $('#buttonGetStok').hide();
 
                             $.each(isDataBukuStok, function(key, datavalue) {
-                                const table = $('#bukustok').DataTable();
+                                const table = $('#example1').DataTable();
                                 var nilai_persediaan = datavalue.qty * datavalue.fm_hrg_beli_detail;
 
                                 var number = nilai_persediaan;
@@ -176,6 +180,14 @@
             // var someTableDT = $("#penjualan").on("draw.dt", function() {
             //     $(this).find(".dataTables_empty").parents('tbody').empty();
             // }).DataTable
+            $('.spinLoad')
+                .hide() // Hide it initially
+                .ajaxStart(function() {
+                    $(this).show();
+                })
+                .ajaxStop(function() {
+                    $(this).hide();
+                });
         </script>
     @endpush
 @endsection
